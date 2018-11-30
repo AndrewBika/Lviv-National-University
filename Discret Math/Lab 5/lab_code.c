@@ -1,12 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>   
-#define SIZE 30                 // Кількість вершин, розмір матриці
+#define SIZE 30                 // How many vertices do we have?
 
-int Array[SIZE][SIZE];          // Масив матриці графа
-int distance[SIZE];             // Масив мінімальних відстаней
-int vertex[SIZE];               // Масив вершин
+int Array[SIZE][SIZE];          // Graph matrix array.
+int distance[SIZE];             // Min. distances array.
+int vertex[SIZE];               // Vertices array.
 
-// Заповнення матриці нулями
 void zeroArray()
 {
     for(int i = 0; i < SIZE; i++)
@@ -14,7 +13,7 @@ void zeroArray()
            Array[i][j]=0;
 }
 
-// Запис дуг в матрицю
+// Entering edges into the matrix.
 void enterEdges()
 {
     printf("Enter edges:\n");
@@ -27,7 +26,7 @@ void enterEdges()
     }
 }
 
-// Вивід матриці графа
+// Output
 void printArray()  
 {
     for(int i = 0; i < SIZE; i++)
@@ -40,18 +39,18 @@ void printArray()
     }
 } 
 
-// Ініціалізація масивів відстаней та вершин
+// Array initialization.
 void initArray()
 {
     for(int i = 0; i < SIZE; i++)
     {
-        distance[i] = 10000;        // Всі відстані поки що є невизначеними, тому 10000
-        vertex[i] =1;              // Всі вершини є необійденими, мають значення 1
+        distance[i] = 10000;       // All distances are currently unknown, so we use a big-big number.
+        vertex[i] =1;              // No vertix has been indixed yet.
     }
-    distance[0] = 0;               // Відстань до першої вершини 0
+    distance[0] = 0;               // Distance to vertix 0.
 }
 
-// Вивід найкоротших відстаней до вершин 1-30
+// Output of smallest distances.
 void printDistance()
 {
     printf("\nShortest path to every vertex(1-30): \n");
@@ -63,39 +62,34 @@ void printDistance()
         }
 }
 
-
-
-// Головна функція
 int main(void)
 {                                
-    int temp;                     // Тимчасова змінна для запису матриці графа
-    int minindex;                 // Змінна для ітерацій циклу основного алгоритму
+    int temp;
+    int minindex;
     int min;
   
-    zeroArray();                  // Заповнення матриці нулями
+    zeroArray();
 
-    enterEdges();                 // Ввід ребер та їхньої ваги
+    enterEdges();
   
-    printArray();                 // Вивід матриці
+    printArray();
     
-    initArray();                  // Ініціалізація масивів відстаней та вершин
+    initArray();
   
-  
-    // Основний алгоритм
     do 
     {
         minindex=10000;
         min=10000;
         for(int i = 0; i < SIZE; i++)
         { 
-            if((vertex[i] == 1) && (distance[i] < min))         // Якщо вершину ще не обійшли і вага менша за min
+            if((vertex[i] == 1) && (distance[i] < min))      // If vertix hasn't been used yet and weight < min.
             { 
-                min=distance[i];                             // Встановлюємо змінній min мінімальне значення
-                minindex=i;									 // Визначаємо позицію мінімальної відстані
+                min=distance[i];
+                minindex=i;
             }
         }
 
-        if(min!=10000)                                // Якщо попередня умова виконалась
+        if(min != 10000)
         {
             for(int i = 0; i <SIZE; i++)
             {
@@ -104,41 +98,40 @@ int main(void)
                     temp = min + Array[minindex][i];
                     if(temp < distance[i])
                     {
-                        distance[i] = temp;                           // Відстань записуємо в масив відстаней
+                        distance[i] = temp;                           // Put down the distance into our distances array.
                     }
                 }
             }
-            vertex[minindex] = 0;                               // Помічаємо вершину пройденою
+            vertex[minindex] = 0;                               // Vertix is used, mark it.
         }
     } 
-    while(minindex < 10000);                                // Допоки не знайдемо всіх відстаней
+    while(minindex < 10000);
       
-    printDistance();                                        // Вивід найкоротших відстаней
+    printDistance();
      
-	// Відновлення шляху
-    int ver[SIZE]; 				// Масив відвіданих вершин
-    int end = 29; 				// Індекс кінцевої вершини 30-1=29
-    ver[0] = end + 1; 			// Перший елемент -- остання вершина
-    int k = 1; 					// Індекс попередньої вершини
-    int weight = distance[end]; // вес конечной вершины
+    // Gathering the min path.
+    int ver[SIZE];
+    int end = SIZE - 1; 		// Last vertix index(since we begin count from 0)
+    ver[0] = end + 1; 			// First element - last vertix.
+    int k = 1;
+    int weight = distance[end];
 
-    while (end > 0) // Поки не дійшли до початкової вершини
+    while (end > 0)
     {
-        for(int i = 0; i < SIZE; i++) // Переглядаємо всі вершини
-            if (Array[end][i] != 0)   // Якщо зв'язок є
+        for(int i = 0; i < SIZE; i++)
+            if (Array[end][i] != 0)
             {
-                int temp = weight - Array[end][i]; // Визначаємо вагу шляху з попередньої вершини
-                if (temp == distance[i]) // Якщо вага співпала з вирахуваною
-                {                 		 // Значить, з цієї вершини був здійснений перехід
-                    weight = temp;       // Зберігаємо нову вагу
-                    end = i;        	 // Зберігаємо попередню вершину
-                    ver[k] = i + 1; 	 // І записуємо її в масив
+                int temp = weight - Array[end][i];
+                if (temp == distance[i])
+                {
+                    weight = temp;
+                    end = i;
+                    ver[k] = i + 1;
                     k++;
                 }
             }
     }
-      
-    // Вивід шляху (початкова вершина опинилась в кінці масиву з k елементів)
+
     printf("\nOutput of the shortest path:\n");
     for(int i = k-1; i >= 0; i--)
     {
